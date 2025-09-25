@@ -1,0 +1,8 @@
+langchain
+pandas
+pymupdf
+openpyxl
+langchain-google-genai
+langchain-community
+sentence-transformers
+langchain_huggingface
