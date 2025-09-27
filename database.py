@@ -6,8 +6,15 @@ from langchain_huggingface import HuggingFaceEmbeddings
 with open("data.txt", "r", encoding="utf-8") as f:
     docs = f.read()
 
-splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
-chunks = splitter.split_text(docs)
+sections = docs.split("=====")
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=80)
+
+chunks = []
+for section in sections:
+    section = section.strip()
+    if section:
+        chunks.extend(splitter.split_text(section))
 
 model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
@@ -19,7 +26,7 @@ vector_store = Chroma(
 
 vector_store.add_texts(
     texts=chunks,
-    metadatas=[{"source": "cv.txt"} for _ in chunks],
+    metadatas=[{"source": "data.txt"} for _ in chunks],
     ids=[f"chunk_{i}" for i in range(len(chunks))]
 )
 
