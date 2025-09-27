@@ -4,6 +4,9 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.retrievers import EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever
+from langchain_core.documents import Document
 
 def process_query(query):
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -26,20 +29,34 @@ def process_query(query):
             (
                 "system",
                 "És um assistente que reponde a perguntas de trabalhadores da \
-                EY sobre assuntos relacionados com a empresa, outros trabalhadores, \
-                algumas notícias e funcionamento/políticas da empresa. Usa o contexto \
-                retornado abaixo para responder às perguntas. Se não souberes responder diz apenas: \"Não sei responder.\": \
+                EY sobre assuntos relacionados com a empresa em geral, dados sobre outros trabalhadores como cargos e dados do seu CV, \
+                algumas notícias sobre mudanças na empresa e funcionamento/políticas da empresa. \
+                Se o utilizador fizer uma nova pergunta sem especificar claramente o que quer, \
+                assume que ele está a pedir a mesma informação da pergunta anterior.Usa o contexto \
+                retornado abaixo como suporte para fundamentar as tuas rezpostas. Se não souberes responder diz apenas: \"Não sei responder.\": \
                 {context}",
             ),
             ("human", "{question}"),
         ]
     )
 
-    retrieved_docs = vector_store.similarity_search(query, k=4)
+    dense_retriever = vector_store.as_retriever(kwargs={"k":3})
+
+    data = vector_store.get(include=["documents"])
+    docs = [Document(page_content=doc) for doc in data["documents"]]
+    bm25_retriever = BM25Retriever.from_documents(docs)
+    bm25_retriever.k = 3
+
+    hybrid_retriever = EnsembleRetriever(
+        retrievers=[dense_retriever, bm25_retriever],
+        weights=[0.5, 0.5]
+    )
+
+    retrieved_docs = hybrid_retriever.get_relevant_documents(query)
     context = "\n".join([doc.page_content for doc in retrieved_docs])
+
     chain = prompt | llm
     message = chain.invoke({"context": context, "question": query})
-    
     return message.content
 
 def main():
