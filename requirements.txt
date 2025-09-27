@@ -1,3 +1,4 @@
+python-telegram-bot
 langchain
 pandas
 pymupdf
@@ -6,3 +7,4 @@ langchain-google-genai
 langchain-community
 sentence-transformers
 langchain_huggingface
+rank_bm25
