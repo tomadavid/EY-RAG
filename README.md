@@ -49,14 +49,14 @@ This repository contains a **Retrieval-Augmented Generation (RAG) system** desig
 <img width="529" height="1026" alt="image" src="https://github.com/user-attachments/assets/eb655a5a-c65c-4c94-896e-aef2957c6405" />
 
 ### Project Structure
-.
-├── agregate.txt            # Builds data corpus by extracting text from files in Data/
-├── data.txt                # Consolidated text corpus
-├── database.py             # Builds a Chroma Vector DB
-├── Data/                   # Original data files (Excel, PDFs, TXT)
-├── query.py                # Query processing and RAG
-├── telegram_bot.py         # Telegram bot interface
-├── README.md
+
+- **agregate.txt** – Script that extracts text from raw files in `Data/` and prepares the initial corpus.  
+- **data.txt** – Final consolidated text corpus with headers for RAG processing.  
+- **database.py** – Creates and persists the Chroma vector database with embeddings.  
+- **Data/** – Folder containing all original data files (Excel, PDFs, TXT).  
+- **query.py** – Main RAG pipeline that handles queries and retrieves relevant chunks.  
+- **telegram_bot.py** – Telegram bot for interactive user queries.  
+- **README.md** – Project documentation and instructions.
 
 ### Technologies Used
 
