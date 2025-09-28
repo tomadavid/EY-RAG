@@ -48,6 +48,16 @@ This repository contains a **Retrieval-Augmented Generation (RAG) system** desig
 
 <img width="529" height="1026" alt="image" src="https://github.com/user-attachments/assets/eb655a5a-c65c-4c94-896e-aef2957c6405" />
 
+### Project Structure
+.
+├── agregate.txt            # Builds data corpus by extracting text from files in Data/
+├── data.txt                # Consolidated text corpus
+├── database.py             # Builds a Chroma Vector DB
+├── Data/                   # Original data files (Excel, PDFs, TXT)
+├── query.py                # Query processing and RAG
+├── telegram_bot.py         # Telegram bot interface
+├── README.md
+
 ### Technologies Used
 
 - Python 3.10+
